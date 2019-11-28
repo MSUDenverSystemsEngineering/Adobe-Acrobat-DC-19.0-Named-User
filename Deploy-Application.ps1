@@ -198,7 +198,6 @@ Try {
 
 		# <Perform Uninstallation tasks here>
 		Remove-MSIApplications -Name "Adobe Acrobat DC" -PassThru
-
 		##*===============================================
 		##* POST-UNINSTALLATION
 		##*===============================================
