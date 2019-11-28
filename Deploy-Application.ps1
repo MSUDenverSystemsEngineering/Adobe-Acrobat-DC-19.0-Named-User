@@ -150,6 +150,21 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
+		# Restart explorer if necessary
+		$ProcessActive = Get-Process explorer -ErrorAction SilentlyContinue
+		if(!$ProcessActive){
+				Execute-ProcessAsUser -Path "$envSystemRoot\explorer.exe"
+				Write-Log "Restarting Explorer"
+		}
+		Else{
+				Write-Log "No restart of explorer needed"
+		}
+		$exitCode = Execute-Process -Path "$envCommonProgramFilesX86\Adobe\OOBE_Enterprise\RemoteUpdateManager\RemoteUpdateManager.exe" -WindowStyle "Hidden" -PassThru
+		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
+
+		Remove-File -Path "$envCommonDesktop\Adobe Creative Cloud.lnk" -ContinueOnError $true
+
+		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
 
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {
@@ -169,21 +184,7 @@ Try {
 		Show-InstallationProgress
 
 		## <Perform Pre-Uninstallation tasks here>
-		# Restart explorer if necessary
-		$ProcessActive = Get-Process explorer -ErrorAction SilentlyContinue
-		if(!$ProcessActive){
-				Execute-ProcessAsUser -Path "$envSystemRoot\explorer.exe"
-				Write-Log "Restarting Explorer"
-		}
-		Else{
-				Write-Log "No restart of explorer needed"
-		}
-		$exitCode = Execute-Process -Path "$envCommonProgramFilesX86\Adobe\OOBE_Enterprise\RemoteUpdateManager\RemoteUpdateManager.exe" -WindowStyle "Hidden" -PassThru
-		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
-		Remove-File -Path "$envCommonDesktop\Adobe Creative Cloud.lnk" -ContinueOnError $true
-
-		Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
 		##*===============================================
 		##* UNINSTALLATION
 		##*===============================================
