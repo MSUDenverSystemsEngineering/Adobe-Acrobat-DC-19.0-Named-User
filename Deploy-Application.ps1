@@ -196,7 +196,7 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
-		$exitCode = Execute-Process -Path "$dirSupportFiles\AdobeAcroCleaner_DC2015.exe" -Parameters "/Silent /Product=0" -WindowStyle "Hidden" -PassThru
+		$exitCode = Remove-MSIApplications -Name "Adobe Acrobat DC" -PassThru
 		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 		##*===============================================
 		##* POST-UNINSTALLATION
